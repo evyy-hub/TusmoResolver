@@ -1,0 +1,15 @@
+[package]
+name = "TusmoResolver"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chromiumoxide = "0.9.1"
+futures = "0.3.34"
+tokio = "1.54.1"
+anyhow = "1.0.86"
+serde = "1.0.229"
+
+deunicode = "1"
+rayon = "1"
+clap = { version = "4", features = ["derive"] }
