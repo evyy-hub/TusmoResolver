@@ -36,8 +36,7 @@ fn load_word_list(cfg: &LangConfig) -> anyhow::Result<String> {
     })?;
     // The extra file is optional
     println!("file loaded: {}", cfg.words_file);
-    let extra = std::fs::read_to_string(cfg.extra_file).unwrap_or_default();
-    Ok(format!("{}\n{}", main, extra))
+    Ok(format!("{}\n", main))
 }
 
 fn load_banned(path: &str) -> HashSet<String> {

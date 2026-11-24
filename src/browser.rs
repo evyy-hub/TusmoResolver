@@ -28,6 +28,36 @@ pub async fn open_browser(lang: Lang) -> anyhow::Result<()> {
     let _handle = tokio::spawn(async move { while let Some(_event) = handler.next().await {} });
 
     let page = browser.new_page(cfg.url).await?;
+
+    let language = lang.storage_value();
+
+    let current_language = page.evaluate(
+        "localStorage.getItem('tusmo:lang')"
+    ).await?;
+
+    let current_language = current_language
+        .value()
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+
+    if current_language != language {
+        println!(
+            "Changing language from '{}' to '{}'",
+            current_language,
+            language
+        );
+
+        page.evaluate(format!(
+            "localStorage.setItem('tusmo:lang', '{}')",
+            language
+        )).await?;
+
+        page.reload().await?;
+        wait_until(&page, "document.readyState === 'complete'", 15000).await?;
+    } else {
+        println!("Language already set to '{}', skipping reload", language);
+    }
+
     install_popup_killer(&page).await?;
     println!("Clicking on tile '{}'", cfg.mode_label);
     page.find_xpath(&format!(
